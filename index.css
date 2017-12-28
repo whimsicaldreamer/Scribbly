@@ -1,0 +1,15 @@
+body {
+    margin: 0;
+    background-color: #F0F4C3;
+    border-top: 15px solid #827717;
+}
+#canvasWrapper {
+    display: flex;
+}
+#drawingBoard {
+    border: 3px solid #827717;
+    margin-top: 65px;
+    margin-left: 20px;
+    background-color: white;
+    background-image: url('http://images.all-free-download.com/images/graphicthumb/paper_texture_picture_169367.jpg');
+}

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scribbly</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+<div id="canvasWrapper">
+    <canvas id="drawingBoard" width="700" height="400"></canvas>
+</div>
+
+<script src="scribbly.js"></script>
+<script>
+    var scribble = new Scribbly({
+        canvas: 'drawingBoard',
+        lineThickness: 15,
+        lineColor: '#ff0000'
+    });
+</script>
+</body>
+</html>
