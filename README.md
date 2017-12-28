@@ -1,5 +1,5 @@
 # Scribbly
-####Simple Usage  
+#### Simple Usage  
 
  - Declare the HTML5 canvas element as:  
  `<canvas id="drawingBoard" width="700" height="400"></canvas>`
