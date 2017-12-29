@@ -35,7 +35,7 @@
             canvas: "",
             lineThickness: 2,
             lineColor: "#000000",
-            toolbar: true // ToDo toolbar to be added with different tools
+            toolbar: true
         };
 
         // extend config
@@ -55,6 +55,14 @@
         board = document.getElementById(opts.canvas);
         ctx = board.getContext("2d");
 
+        if(opts.toolbar) {
+            buildToolbar();
+            var clearBtn = document.getElementById('clearBtn');
+            var eraseBtn = document.getElementById('eraseBtn');
+
+            clearBtn.addEventListener('click', this.clear, false);
+        }
+
         // Add mouse event listeners to canvas element
         board.addEventListener("mousedown", press, false);
         board.addEventListener("mousemove", drag, false);
@@ -66,7 +74,6 @@
         board.addEventListener("touchmove", drag, false);
         board.addEventListener("touchend", release, false);
         board.addEventListener("touchcancel", cancel, false);
-
     };
 
     // Clear the canvas
@@ -120,6 +127,48 @@
 
     };
 
+    var buildToolbar = function () {
+        var rect = board.getBoundingClientRect();
+        var toolbarWrapper = document.createElement('div');
+        var clearBtn = document.createElement('div');
+        clearBtn.setAttribute('id', 'clearBtn');
+        var eraseBtn = document.createElement('div');
+        eraseBtn.setAttribute('id', 'eraseBtn');
+
+        clearBtn.textContent = "Clear";
+        eraseBtn.textContent = "Eraser (coming soon)";
+
+        toolbarWrapper.style.width = rect.width + 'px';
+        toolbarWrapper.style.height = "30px";
+        toolbarWrapper.style.position = "relative";
+        toolbarWrapper.style.left = rect.left + 'px';
+        toolbarWrapper.style.backgroundColor = "yellow";
+        toolbarWrapper.style.display = 'flex';
+        toolbarWrapper.style.flexDirection = 'row';
+
+        clearBtn.style.minWidth = "50px";
+        eraseBtn.style.minWidth = "50px";
+
+        clearBtn.style.backgroundColor = "#ffffff";
+        eraseBtn.style.backgroundColor = "#ffffff";
+
+        clearBtn.style.marginLeft = "10px";
+        eraseBtn.style.marginLeft = "10px";
+
+        clearBtn.style.textAlign = "center";
+        eraseBtn.style.textAlign = "center";
+
+        clearBtn.style.lineHeight = "30px";
+        eraseBtn.style.lineHeight = "30px";
+
+        clearBtn.style.cursor = "pointer";
+        eraseBtn.style.cursor = "pointer";
+
+        toolbarWrapper.appendChild(clearBtn);
+        toolbarWrapper.appendChild(eraseBtn);
+        document.body.appendChild(toolbarWrapper);
+    };
+
     // Get the coordinates of the mouse click
     var getMousePos = function(evt) {
         var rect = board.getBoundingClientRect();
@@ -158,6 +207,7 @@
     var drag = function(e) {
         if(isDrawing) {
             isDragging = true;
+
             if(e.type === 'touchmove') {
                 draw(getTouchPos(e).x, getTouchPos(e).y);
             }

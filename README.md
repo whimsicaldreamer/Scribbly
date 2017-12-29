@@ -10,4 +10,19 @@
     
         var scribble = new Scribbly({     
             canvas: 'drawingBoard',
-        });
+        });  
+ 
+#### Options  
+
+   | Options | Default | Description |
+   | :---: | :---: | :---: |
+   | `canvas` | null | Identify your drawing board. **Required** |
+   | `lineThickness` | 2 | Stroke width |
+   | `lineColor` | #000000 | Stroke colour |
+   | `toolbar` | true | Show/ Hide the toolbar |  
+   
+#### Functions  
+
+   | Function | Description |
+   | :---: | :---: |
+   | `clear` | Clears the whole canvas |
