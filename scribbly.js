@@ -19,7 +19,7 @@
     /**
      * Variables
      */
-    var board,
+    let board,
         ctx,
         opts,
         isDrawing = false,
@@ -31,7 +31,7 @@
     function Scribbly(options) {
 
         // Default settings
-        var defaults = {
+        let defaults = {
             canvas: "",
             lineThickness: 2,
             lineColor: "#000000",
@@ -57,8 +57,8 @@
 
         if(opts.toolbar) {
             buildToolbar();
-            var clearBtn = document.getElementById('clearBtn');
-            var eraseBtn = document.getElementById('eraseBtn');
+            let clearBtn = document.getElementById('clearBtn');
+            let eraseBtn = document.getElementById('eraseBtn');
 
             clearBtn.addEventListener('click', this.clear, false);
         }
@@ -89,13 +89,13 @@
     /**
      * Merge two or more objects. Returns a new object.
      */
-    var extend = function () {
+    const extend = function () {
 
-        // Variables
-        var extended = {};
-        var deep = false;
-        var i = 0;
-        var length = arguments.length;
+        // letiables
+        let extended = {};
+        let deep = false;
+        let i = 0;
+        let length = arguments.length;
 
         // Check if a deep merge
         if ( Object.prototype.toString.call( arguments[0] ) === '[object Boolean]' ) {
@@ -104,8 +104,8 @@
         }
 
         // Merge the object into the extended object
-        var merge = function (obj) {
-            for ( var prop in obj ) {
+        let merge = function (obj) {
+            for ( let prop in obj ) {
                 if ( Object.prototype.hasOwnProperty.call( obj, prop ) ) {
                     // If deep merge and property is an object, merge properties
                     if ( deep && Object.prototype.toString.call(obj[prop]) === '[object Object]' ) {
@@ -119,7 +119,7 @@
 
         // Loop through each object and conduct a merge
         for ( ; i < length; i++ ) {
-            var obj = arguments[i];
+            let obj = arguments[i];
             merge(obj);
         }
 
@@ -127,12 +127,12 @@
 
     };
 
-    var buildToolbar = function () {
-        var rect = board.getBoundingClientRect();
-        var toolbarWrapper = document.createElement('div');
-        var clearBtn = document.createElement('div');
+    const buildToolbar = function () {
+        let rect = board.getBoundingClientRect();
+        let toolbarWrapper = document.createElement('div');
+        let clearBtn = document.createElement('div');
         clearBtn.setAttribute('id', 'clearBtn');
-        var eraseBtn = document.createElement('div');
+        let eraseBtn = document.createElement('div');
         eraseBtn.setAttribute('id', 'eraseBtn');
 
         clearBtn.textContent = "Clear";
@@ -170,8 +170,8 @@
     };
 
     // Get the coordinates of the mouse click
-    var getMousePos = function(evt) {
-        var rect = board.getBoundingClientRect();
+    const getMousePos = function(evt) {
+        let rect = board.getBoundingClientRect();
         return {
             x: evt.clientX - rect.left,
             y: evt.clientY - rect.top
@@ -179,8 +179,8 @@
     };
 
     // Get the coordinates of the tap
-    var getTouchPos = function(evt) {
-        var rect = board.getBoundingClientRect();
+    const getTouchPos = function(evt) {
+        let rect = board.getBoundingClientRect();
         return {
             x: evt.touches[0].clientX - rect.left,
             y: evt.touches[0].clientY - rect.top
@@ -188,7 +188,7 @@
     };
 
     // Mouse press/ touchstart event
-    var press = function(e) {
+    const press = function(e) {
         isDrawing = true;
 
         if(e.type === 'touchstart') {
@@ -204,7 +204,7 @@
     };
 
     // Mouse/ touch drag event
-    var drag = function(e) {
+    const drag = function(e) {
         if(isDrawing) {
             isDragging = true;
 
@@ -218,7 +218,7 @@
     };
 
     // Mouse release/ touchend event
-    var release = function(e) {
+    const release = function(e) {
         isDrawing = false;
         isDragging = false;
 
@@ -227,12 +227,12 @@
     };
 
     // When mouse or touch goes out of the canvas
-    var cancel = function(e) {
+    const cancel = function(e) {
         isDrawing = false;
         isDragging = false;
     };
 
-    var draw = function(x, y) {
+    const draw = function(x, y) {
         ctx.lineJoin = "round";
         ctx.lineWidth = opts.lineThickness;
         ctx.strokeStyle = opts.lineColor;
