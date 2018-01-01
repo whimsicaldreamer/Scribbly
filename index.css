@@ -12,3 +12,26 @@ body {
     margin-left: 20px;
     background-color: white;
 }
+
+/**
+    Styling for the toolbar
+ */
+
+#toolbarWrapper {
+    display: flex;
+    flex-direction: row;
+    background-color: darkkhaki;
+    position: relative;
+}
+
+.btn {
+    padding: 10px;
+    margin: 5px 0 5px 10px;
+    background-color: lavender;
+    border: 1px solid burlywood;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.btn:hover {
+    background-color: burlywood;
+}

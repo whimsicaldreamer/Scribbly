@@ -5,16 +5,16 @@
 */
 
 (function (root, factory) {
-    if ( typeof define === 'function' && define.amd ) {
+    if ( typeof define === "function" && define.amd ) {
         define([], factory(root));
-    } else if ( typeof exports === 'object' ) {
+    } else if ( typeof exports === "object" ) {
         module.exports = factory(root);
     } else {
         root.Scribbly = factory(root);
     }
-})(typeof global !== 'undefined' ? global : this.window || this.global, function (root) {
+})(typeof global !== "undefined" ? global : this.window || this.global, function (root) {
 
-    'use strict';
+    "use strict";
 
     /**
      * Variables
@@ -25,7 +25,8 @@
         isDrawing = false,
         isDragging = false,
         startX,
-        startY;
+        startY,
+        curTool;
 
     // Constructor
     function Scribbly(options) {
@@ -57,10 +58,19 @@
 
         if(opts.toolbar) {
             buildToolbar();
-            let clearBtn = document.getElementById('clearBtn');
-            let eraseBtn = document.getElementById('eraseBtn');
+            let clearBtn = document.getElementById("clearBtn");
+            let eraseBtn = document.getElementById("eraseBtn");
+            let markerBtn = document.getElementById("markerBtn");
 
-            clearBtn.addEventListener('click', this.clear, false);
+            clearBtn.addEventListener("click", function () {
+                toolSet("clear");
+            }, false);
+            eraseBtn.addEventListener("click", function () {
+                toolSet("eraser");
+            }, false);
+            markerBtn.addEventListener("click", function () {
+                toolSet("marker");
+            }, false);
         }
 
         // Add mouse event listeners to canvas element
@@ -91,14 +101,14 @@
      */
     const extend = function () {
 
-        // letiables
+        // Variables
         let extended = {};
         let deep = false;
         let i = 0;
         let length = arguments.length;
 
         // Check if a deep merge
-        if ( Object.prototype.toString.call( arguments[0] ) === '[object Boolean]' ) {
+        if ( Object.prototype.toString.call( arguments[0] ) === "[object Boolean]" ) {
             deep = arguments[0];
             i++;
         }
@@ -108,7 +118,7 @@
             for ( let prop in obj ) {
                 if ( Object.prototype.hasOwnProperty.call( obj, prop ) ) {
                     // If deep merge and property is an object, merge properties
-                    if ( deep && Object.prototype.toString.call(obj[prop]) === '[object Object]' ) {
+                    if ( deep && Object.prototype.toString.call(obj[prop]) === "[object Object]" ) {
                         extended[prop] = extend( true, extended[prop], obj[prop] );
                     } else {
                         extended[prop] = obj[prop];
@@ -129,44 +139,43 @@
 
     const buildToolbar = function () {
         let rect = board.getBoundingClientRect();
-        let toolbarWrapper = document.createElement('div');
-        let clearBtn = document.createElement('div');
-        clearBtn.setAttribute('id', 'clearBtn');
-        let eraseBtn = document.createElement('div');
-        eraseBtn.setAttribute('id', 'eraseBtn');
+        let toolbarWrapper = document.createElement("div");
+        let clearBtn = document.createElement("div");
+        let eraseBtn = document.createElement("div");
+        let markerBtn = document.createElement("div");
+
+        toolbarWrapper.setAttribute("id", "toolbarWrapper");
+        clearBtn.setAttribute("id", "clearBtn");
+        eraseBtn.setAttribute("id", "eraseBtn");
+        markerBtn.setAttribute("id", "markerBtn");
+
+        clearBtn.setAttribute("class", "btn");
+        eraseBtn.setAttribute("class", "btn");
+        markerBtn.setAttribute("class", "btn");
 
         clearBtn.textContent = "Clear";
-        eraseBtn.textContent = "Eraser (coming soon)";
+        eraseBtn.textContent = "Eraser";
+        markerBtn.textContent = "Marker";
 
-        toolbarWrapper.style.width = rect.width + 'px';
-        toolbarWrapper.style.height = "30px";
-        toolbarWrapper.style.position = "relative";
+        toolbarWrapper.style.width = rect.width + "px";
         toolbarWrapper.style.left = rect.left + 'px';
-        toolbarWrapper.style.backgroundColor = "yellow";
-        toolbarWrapper.style.display = 'flex';
-        toolbarWrapper.style.flexDirection = 'row';
-
-        clearBtn.style.minWidth = "50px";
-        eraseBtn.style.minWidth = "50px";
-
-        clearBtn.style.backgroundColor = "#ffffff";
-        eraseBtn.style.backgroundColor = "#ffffff";
-
-        clearBtn.style.marginLeft = "10px";
-        eraseBtn.style.marginLeft = "10px";
-
-        clearBtn.style.textAlign = "center";
-        eraseBtn.style.textAlign = "center";
-
-        clearBtn.style.lineHeight = "30px";
-        eraseBtn.style.lineHeight = "30px";
-
-        clearBtn.style.cursor = "pointer";
-        eraseBtn.style.cursor = "pointer";
 
         toolbarWrapper.appendChild(clearBtn);
         toolbarWrapper.appendChild(eraseBtn);
+        toolbarWrapper.appendChild(markerBtn);
         document.body.appendChild(toolbarWrapper);
+    };
+
+    const toolSet = function(tool) {
+        if(tool === "clear") {
+            Scribbly.prototype.clear();
+        }
+        else if(tool === "eraser") {
+            curTool = tool;
+        }
+        else if(tool === "marker") {
+            curTool = tool;
+        }
     };
 
     // Get the coordinates of the mouse click
@@ -189,16 +198,18 @@
 
     // Mouse press/ touchstart event
     const press = function(e) {
+        let pos;
         isDrawing = true;
 
-        if(e.type === 'touchstart') {
-            startX = getTouchPos(e).x;
-            startY = getTouchPos(e).y;
+        if(e.type === "touchstart") {
+            pos = getTouchPos(e);
         }
         else {
-            startX = getMousePos(e).x;
-            startY = getMousePos(e).y;
+            pos = getMousePos(e);
         }
+
+        startX = pos.x;
+        startY = pos.y;
 
         draw(startX, startY);
     };
@@ -206,14 +217,17 @@
     // Mouse/ touch drag event
     const drag = function(e) {
         if(isDrawing) {
+            let pos;
             isDragging = true;
 
-            if(e.type === 'touchmove') {
-                draw(getTouchPos(e).x, getTouchPos(e).y);
+            if(e.type === "touchmove") {
+                pos = getTouchPos(e);
             }
             else {
-                draw(getMousePos(e).x, getMousePos(e).y);
+                pos = getMousePos(e);
             }
+
+            draw(pos.x, pos.y);
         }
     };
 
@@ -232,10 +246,18 @@
         isDragging = false;
     };
 
+    //ToDo Decide whether to or not to expose this function
     const draw = function(x, y) {
         ctx.lineJoin = "round";
         ctx.lineWidth = opts.lineThickness;
         ctx.strokeStyle = opts.lineColor;
+
+        if(curTool === "eraser") {
+            ctx.strokeStyle = "#FFFFFF";
+        }
+        else if(curTool === "marker") {
+            ctx.strokeStyle = opts.lineColor;
+        }
 
         ctx.beginPath();
 
