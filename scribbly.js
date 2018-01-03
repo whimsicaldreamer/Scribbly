@@ -35,6 +35,7 @@
         // Default settings
         let defaults = {
             canvas: "",
+            canvasBg: "#FFFFFF",
             lineThickness: 2,
             lineColor: "#000000",
             toolbar: true
@@ -57,6 +58,9 @@
         board = document.getElementById(opts.canvas);
         ctx = board.getContext("2d");
 
+        // Set background colour of canvas
+        board.style.backgroundColor = opts.canvasBg;
+
         // Default stroke size
         curStrokeSize = opts.lineThickness;
 
@@ -69,16 +73,16 @@
             let saveBtn = document.getElementById("saveBtn");
 
             clearBtn.addEventListener("click", function () {
-                setTool("clear");
+                Scribbly.prototype.setTool("clear");
             }, false);
             eraseBtn.addEventListener("click", function () {
-                setTool("eraser");
+                Scribbly.prototype.setTool("eraser");
             }, false);
             markerBtn.addEventListener("click", function () {
-                setTool("marker");
+                Scribbly.prototype.setTool("marker");
             }, false);
             strokeSizeSlider.addEventListener("input", function () {
-                setTool("strokeSize", this.value);
+                Scribbly.prototype.setTool("brushSize", this.value);
             }, false);
             saveBtn.addEventListener("click", function () {
                 Scribbly.prototype.save();
@@ -99,6 +103,24 @@
         board.addEventListener("touchcancel", cancel, false);
     };
 
+    // Set a specific tool to use on canvas
+    Scribbly.prototype.setTool = function(tool, size) {
+        if(tool === "clear") {
+            Scribbly.prototype.clear();
+        }
+        else if(tool === "eraser") {
+            curTool = tool;
+            curStrokeSize = size;
+        }
+        else if(tool === "marker") {
+            curTool = tool;
+            curStrokeSize = size;
+        }
+        else if(tool === "brushSize") {
+            curStrokeSize = size;
+        }
+    };
+
     // Clear the canvas
     Scribbly.prototype.clear = function() {
         ctx.clearRect(0, 0, board.width, board.height);
@@ -109,17 +131,45 @@
      * Save the image
      * Currently save the image by downloading it
      * ToDo Decide whether this function should be a part of setTool method
-     * ToDo Improve this method
      */
-    Scribbly.prototype.save = function () {
-        console.log("Image saved");
+    Scribbly.prototype.save = function (filename) {
+        if(!filename) {
+            filename = "My Scribble";
+        }
+
+        //get the current ImageData for the canvas.
+        let data = ctx.getImageData(0, 0, board.width, board.height);
+
+        //store the current globalCompositeOperation
+        let compositeOperation = ctx.globalCompositeOperation;
+
+        //set to draw behind current content
+        ctx.globalCompositeOperation = "destination-over";
+
+        //set background color
+        ctx.fillStyle = opts.canvasBg;
+
+        //draw background / rect on entire canvas
+        ctx.fillRect(0, 0, board.width, board.height);
+
+        //get the image data from the canvas
+        let imageData = board.toDataURL("image/png");
+
+        //clear the canvas
+        ctx.clearRect (0, 0, board.width, board.height);
+
+        //restore it with original / cached ImageData
+        ctx.putImageData(data, 0,0);
+
+        //reset the globalCompositeOperation to what it was
+        ctx.globalCompositeOperation = compositeOperation;
 
         let image = new Image();
-        image.src = board.toDataURL("image/png");
+        image.src = imageData;
 
         let link = document.createElement('a');
         link.setAttribute("href", image.src);
-        link.setAttribute("download", "My Scribble.png");
+        link.setAttribute("download", filename+".png");
 
         link.style.display = "none";
         document.body.appendChild(link);
@@ -217,22 +267,6 @@
         document.body.appendChild(toolbarWrapper);
     };
 
-    // ToDo To expose or not to expose, that is the question
-    const setTool = function(tool, size) {
-        if(tool === "clear") {
-            Scribbly.prototype.clear();
-        }
-        else if(tool === "eraser") {
-            curTool = tool;
-        }
-        else if(tool === "marker") {
-            curTool = tool;
-        }
-        else if(tool === "strokeSize") {
-            curStrokeSize = size;
-        }
-    };
-
     // Get the coordinates of the mouse click
     const getMousePos = function(evt) {
         let rect = board.getBoundingClientRect();
@@ -307,7 +341,7 @@
         ctx.strokeStyle = opts.lineColor;
 
         if(curTool === "eraser") {
-            ctx.strokeStyle = "#FFFFFF";
+            ctx.strokeStyle = opts.canvasBg;
         }
         else if(curTool === "marker") {
             ctx.strokeStyle = opts.lineColor;
