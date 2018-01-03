@@ -31,7 +31,39 @@ body {
     border: 1px solid burlywood;
     border-radius: 5px;
     cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
 }
 .btn:hover {
     background-color: burlywood;
+}
+
+#strokeSizeSlider {
+    -webkit-appearance: none;
+    height: 15px;
+    border-radius: 50px;
+    background: #827717;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    align-self: center;
+}
+
+#strokeSizeSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: whitesmoke;
+    cursor: pointer;
+}
+
+#strokeSizeSlider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: whitesmoke;
+    cursor: pointer;
 }

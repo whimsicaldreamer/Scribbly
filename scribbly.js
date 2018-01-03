@@ -26,7 +26,8 @@
         isDragging = false,
         startX,
         startY,
-        curTool;
+        curTool,
+        curStrokeSize;
 
     // Constructor
     function Scribbly(options) {
@@ -56,21 +57,33 @@
         board = document.getElementById(opts.canvas);
         ctx = board.getContext("2d");
 
+        // Default stroke size
+        curStrokeSize = opts.lineThickness;
+
         if(opts.toolbar) {
             buildToolbar();
             let clearBtn = document.getElementById("clearBtn");
             let eraseBtn = document.getElementById("eraseBtn");
             let markerBtn = document.getElementById("markerBtn");
+            let strokeSizeSlider = document.getElementById("strokeSizeSlider");
+            let saveBtn = document.getElementById("saveBtn");
 
             clearBtn.addEventListener("click", function () {
-                toolSet("clear");
+                setTool("clear");
             }, false);
             eraseBtn.addEventListener("click", function () {
-                toolSet("eraser");
+                setTool("eraser");
             }, false);
             markerBtn.addEventListener("click", function () {
-                toolSet("marker");
+                setTool("marker");
             }, false);
+            strokeSizeSlider.addEventListener("input", function () {
+                setTool("strokeSize", this.value);
+            }, false);
+            saveBtn.addEventListener("click", function () {
+                Scribbly.prototype.save();
+            })
+
         }
 
         // Add mouse event listeners to canvas element
@@ -89,6 +102,31 @@
     // Clear the canvas
     Scribbly.prototype.clear = function() {
         ctx.clearRect(0, 0, board.width, board.height);
+        curTool = "marker";
+    };
+
+    /**
+     * Save the image
+     * Currently save the image by downloading it
+     * ToDo Decide whether this function should be a part of setTool method
+     * ToDo Improve this method
+     */
+    Scribbly.prototype.save = function () {
+        console.log("Image saved");
+
+        let image = new Image();
+        image.src = board.toDataURL("image/png");
+
+        let link = document.createElement('a');
+        link.setAttribute("href", image.src);
+        link.setAttribute("download", "My Scribble.png");
+
+        link.style.display = "none";
+        document.body.appendChild(link);
+
+        link.click();
+
+        document.body.removeChild(link);
     };
 
 
@@ -143,19 +181,30 @@
         let clearBtn = document.createElement("div");
         let eraseBtn = document.createElement("div");
         let markerBtn = document.createElement("div");
+        let strokeSizeSlider = document.createElement("input");
+        let saveBtn = document.createElement("div");
 
         toolbarWrapper.setAttribute("id", "toolbarWrapper");
         clearBtn.setAttribute("id", "clearBtn");
         eraseBtn.setAttribute("id", "eraseBtn");
         markerBtn.setAttribute("id", "markerBtn");
+        strokeSizeSlider.setAttribute("id", "strokeSizeSlider");
+        saveBtn.setAttribute("id", "saveBtn");
+
+        strokeSizeSlider.setAttribute("type", "range");
+        strokeSizeSlider.setAttribute("min", "1");
+        strokeSizeSlider.setAttribute("max", "50");
+        strokeSizeSlider.setAttribute("value", opts.lineThickness);
 
         clearBtn.setAttribute("class", "btn");
         eraseBtn.setAttribute("class", "btn");
         markerBtn.setAttribute("class", "btn");
+        saveBtn.setAttribute("class", "btn");
 
         clearBtn.textContent = "Clear";
         eraseBtn.textContent = "Eraser";
         markerBtn.textContent = "Marker";
+        saveBtn.textContent = "Save";
 
         toolbarWrapper.style.width = rect.width + "px";
         toolbarWrapper.style.left = rect.left + 'px';
@@ -163,10 +212,13 @@
         toolbarWrapper.appendChild(clearBtn);
         toolbarWrapper.appendChild(eraseBtn);
         toolbarWrapper.appendChild(markerBtn);
+        toolbarWrapper.appendChild(strokeSizeSlider);
+        toolbarWrapper.appendChild(saveBtn);
         document.body.appendChild(toolbarWrapper);
     };
 
-    const toolSet = function(tool) {
+    // ToDo To expose or not to expose, that is the question
+    const setTool = function(tool, size) {
         if(tool === "clear") {
             Scribbly.prototype.clear();
         }
@@ -175,6 +227,9 @@
         }
         else if(tool === "marker") {
             curTool = tool;
+        }
+        else if(tool === "strokeSize") {
+            curStrokeSize = size;
         }
     };
 
@@ -246,10 +301,9 @@
         isDragging = false;
     };
 
-    //ToDo Decide whether to or not to expose this function
     const draw = function(x, y) {
         ctx.lineJoin = "round";
-        ctx.lineWidth = opts.lineThickness;
+        ctx.lineWidth = curStrokeSize;
         ctx.strokeStyle = opts.lineColor;
 
         if(curTool === "eraser") {
