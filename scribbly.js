@@ -66,6 +66,7 @@
 
         if(opts.toolbar) {
             buildToolbar();
+
             let clearBtn = document.getElementById("clearBtn");
             let eraseBtn = document.getElementById("eraseBtn");
             let markerBtn = document.getElementById("markerBtn");
@@ -76,13 +77,13 @@
                 Scribbly.prototype.setTool("clear");
             }, false);
             eraseBtn.addEventListener("click", function () {
-                Scribbly.prototype.setTool("eraser");
+                Scribbly.prototype.setTool("eraser", curStrokeSize);
             }, false);
             markerBtn.addEventListener("click", function () {
-                Scribbly.prototype.setTool("marker");
+                Scribbly.prototype.setTool("marker", curStrokeSize);
             }, false);
             strokeSizeSlider.addEventListener("input", function () {
-                Scribbly.prototype.setTool("brushSize", this.value);
+                curStrokeSize = this.value;
             }, false);
             saveBtn.addEventListener("click", function () {
                 Scribbly.prototype.save();
@@ -114,9 +115,6 @@
         }
         else if(tool === "marker") {
             curTool = tool;
-            curStrokeSize = size;
-        }
-        else if(tool === "brushSize") {
             curStrokeSize = size;
         }
     };
