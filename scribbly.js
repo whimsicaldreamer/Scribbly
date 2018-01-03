@@ -27,7 +27,8 @@
         startX,
         startY,
         curTool,
-        curStrokeSize;
+        curStrokeSize,
+        curStrokeColor;
 
     // Constructor
     function Scribbly(options) {
@@ -64,6 +65,9 @@
         // Default stroke size
         curStrokeSize = opts.lineThickness;
 
+        // Default brush color
+        curStrokeColor = opts.lineColor;
+
         if(opts.toolbar) {
             buildToolbar();
 
@@ -71,6 +75,7 @@
             let eraseBtn = document.getElementById("eraseBtn");
             let markerBtn = document.getElementById("markerBtn");
             let strokeSizeSlider = document.getElementById("strokeSizeSlider");
+            let colorPalette = document.getElementById("colorPalette");
             let saveBtn = document.getElementById("saveBtn");
 
             clearBtn.addEventListener("click", function () {
@@ -80,10 +85,13 @@
                 Scribbly.prototype.setTool("eraser", curStrokeSize);
             }, false);
             markerBtn.addEventListener("click", function () {
-                Scribbly.prototype.setTool("marker", curStrokeSize);
+                Scribbly.prototype.setTool("marker", curStrokeSize, curStrokeColor);
             }, false);
             strokeSizeSlider.addEventListener("input", function () {
                 curStrokeSize = this.value;
+            }, false);
+            colorPalette.addEventListener("input", function () {
+                curStrokeColor = this.value;
             }, false);
             saveBtn.addEventListener("click", function () {
                 Scribbly.prototype.save();
@@ -105,7 +113,7 @@
     };
 
     // Set a specific tool to use on canvas
-    Scribbly.prototype.setTool = function(tool, size) {
+    Scribbly.prototype.setTool = function(tool, size, color) {
         if(tool === "clear") {
             Scribbly.prototype.clear();
         }
@@ -116,6 +124,7 @@
         else if(tool === "marker") {
             curTool = tool;
             curStrokeSize = size;
+            curStrokeColor = color;
         }
     };
 
@@ -230,6 +239,7 @@
         let eraseBtn = document.createElement("div");
         let markerBtn = document.createElement("div");
         let strokeSizeSlider = document.createElement("input");
+        let colorPalette = document.createElement("input");
         let saveBtn = document.createElement("div");
 
         toolbarWrapper.setAttribute("id", "toolbarWrapper");
@@ -237,7 +247,11 @@
         eraseBtn.setAttribute("id", "eraseBtn");
         markerBtn.setAttribute("id", "markerBtn");
         strokeSizeSlider.setAttribute("id", "strokeSizeSlider");
+        colorPalette.setAttribute("id", "colorPalette");
         saveBtn.setAttribute("id", "saveBtn");
+
+        colorPalette.setAttribute("type", "color");
+        colorPalette.setAttribute("value", opts.lineColor);
 
         strokeSizeSlider.setAttribute("type", "range");
         strokeSizeSlider.setAttribute("min", "1");
@@ -261,6 +275,7 @@
         toolbarWrapper.appendChild(eraseBtn);
         toolbarWrapper.appendChild(markerBtn);
         toolbarWrapper.appendChild(strokeSizeSlider);
+        toolbarWrapper.appendChild(colorPalette);
         toolbarWrapper.appendChild(saveBtn);
         document.body.appendChild(toolbarWrapper);
     };
@@ -336,13 +351,13 @@
     const draw = function(x, y) {
         ctx.lineJoin = "round";
         ctx.lineWidth = curStrokeSize;
-        ctx.strokeStyle = opts.lineColor;
+        ctx.strokeStyle = curStrokeColor;
 
         if(curTool === "eraser") {
             ctx.strokeStyle = opts.canvasBg;
         }
         else if(curTool === "marker") {
-            ctx.strokeStyle = opts.lineColor;
+            ctx.strokeStyle = curStrokeColor;
         }
 
         ctx.beginPath();

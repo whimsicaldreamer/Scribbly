@@ -30,4 +30,4 @@
    | :---: | :---: |
    | `clear()` | Clears the whole canvas |
    | `save(filename)` | Saves the canvas and downloads the image. <br> Parameter `filename` is optional |
-   | `setTool(tool, size)` | **Tools available are :** `clear`, `eraser`, `marker`, `brushSize`.<br>Parameter `size` sets the stroke size  | 
+   | `setTool(tool, size, color)` | **Tools available are :** `clear`, `eraser`, `marker`.<br>Parameter `size` sets the stroke size  | 

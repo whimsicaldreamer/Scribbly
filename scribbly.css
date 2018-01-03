@@ -52,3 +52,7 @@
     background: whitesmoke;
     cursor: pointer;
 }
+
+#colorPalette {
+    align-self: center;
+}
