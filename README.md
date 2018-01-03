@@ -5,6 +5,8 @@
  `<canvas id="drawingBoard" width="700" height="400"></canvas>`
     
  - Import `scribbly.js` as `<script src="scribbly.js"></script>`  
+ 
+ - Import `scribbly.css` as `<link rel="stylesheet" href="scribbly.css">` if `toolbar` is not set to `false`
 
  - Then initialize your script with the HTML5 canvas element:
     
